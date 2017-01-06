@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "GetHeaders",
+  "version": "0.1.0",
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "permissions": [
+    "webRequest",
+    "webNavigation",
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "run_at": "document_end",
+      "js": ["content.js"]
+    }
+  ]
+}
