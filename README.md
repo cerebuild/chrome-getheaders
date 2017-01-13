@@ -1,16 +1,24 @@
 # chrome-getheaders
-This extension makes the HTTP headers available to the DOM.
+This Chrome extension makes the HTTP headers of the _main_frame_ response (the response responsible for the website visible in the browser) available to the DOM.
 
-It was built to gain access to the HTTP response and headers over the WebDriver protocol.
+It was built to gain access to the HTTP status code, request method and response headers over the WebDriver protocol in a browser automation scenario. It's an alternative to the BrowserMob proxy.
+
+## Security
+Please be aware that this extension exposes all headers of the current page to the DOM to any script running in the current page listening for the ```GotHeaders``` event. Those headers could contain sensitive information like session identifiers. This should not be an issue in an isolated automated end-to-end test, but for any other use case you should ask yourself the following question: "Do I trust the code running in the DOM with the headers (don't forget about XSS and persistent XSS)?"
 
 ## Usage
+Package the extension using Chrome. Then install it via the WebDriver capabilities (described [here](https://sites.google.com/a/chromium.org/chromedriver/extensions)).
+
+Bellow you'll find a general example how to talk to the extension within the DOM. You can combine this with WebDriver's ability to execute javascript asynchronously by calling the WebDriver callback instead of ```console.log```.
+
 ```js
 // First we need to add an event listener to listen for the event
 // The response including the headers is stored in event.detail
 document.addEventListener('GotHeaders', function(event) { console.log(event.detail) })
 
-// Now, dispatch the custom GetHeaders event
-document.dispatchEvent(new CustomEvent("GetHeaders"))
+// Now, dispatch the custom GetHeaders event.
+// This triggers the extension and causes the GotHeaders event to fire with the results
+document.dispatchEvent(new CustomEvent('GetHeaders'))
 ```
 
 The result may look like this
@@ -90,3 +98,5 @@ The result may look like this
   "url": "https:\/\/www.heise.de\/"
 }
 ```
+## License
+[MIT](LICENSE)
